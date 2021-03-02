@@ -1,0 +1,142 @@
+double Thermister(int RawADC) 
+
+{
+  double Temp;
+  Temp = log(((10240000/RawADC) - 10000));
+  Temp = 1 / (0.001129148 + (0.000234125 + (0.0000000876741 * Temp * Temp ))* Temp );
+  Temp = Temp - 273.15; // Convert Kelvin to Celcius
+  return Temp;
+}
+
+
+
+float vout0 = 0.0;
+float vout1 = 0.0;
+float vout2 = 0.0;
+float vout3= 0.0;
+
+float vin0 = 0.0;
+float vin1 = 0.0;
+float vin2 = 0.0;
+float vin3 = 0.0;
+
+float vip0 = 0.0;
+float vip1 = 0.0;
+float vip2 = 0.0;
+float vip3 = 0.0;
+
+float R1 = 30000.0; //  resistor value
+float R2 = 7500.0; //   resistor value
+ 
+int value0 = 0;
+int value1 = 0;
+int value2 = 0;
+int value3 = 0;
+
+
+void setup(){
+   for (int i=0;i<=8;i++)
+   {
+      pinMode(i, INPUT);
+   }
+   Serial.begin(115200);
+   Serial.print("Battery Voltage");
+}
+void loop()
+{
+   // read the value at analog input
+
+
+         //Voltage V1
+   
+   value0 = analogRead(0);                    //read pin A0
+   vout0 = (value0 * 5.0) / 1024.0;
+   vin0 = (vout0 / (R2/(R1+R2))); 
+   vip0 = vin0+0.10;
+   delay(1500);
+   Serial.print("V1= ");
+   Serial.println(vip0,2);
+   
+     
+           //Temp T1
+       
+        Serial.print("T1=");
+        Serial.print(Thermister(analogRead(4))); //read pin A4
+        Serial.println("c");
+        delay(1500);
+      
+
+
+        //Voltage V2
+     
+       value1 = analogRead(1);                   //read pin A1
+       vout1 = (value1 * 5.0) / 1024.0;
+       vin1 = (vout1 / (R2/(R1+R2))); 
+       vip1 = vin1-4;
+       delay(1500);
+       Serial.print("V2= ");
+       Serial.println(vip1,2);
+     
+
+              //Temp T2      
+      
+        Serial.print("T2=");
+        Serial.print(Thermister(analogRead(5))); //read pin A5
+        Serial.println("c");
+        delay(1500);
+      
+ 
+     
+       
+          //Voltage V3
+    
+      value2 = analogRead(2);                 //read pin A2
+      vout2 = (value2 * 5.0) / 1024.0; 
+      vin2 = (vout2 / (R2/(R1+R2))); 
+      vip2 = vin2-7.90;
+      delay(1500);
+      Serial.print("V3= ");
+      Serial.println(vip2,2);
+    
+
+         //Temp T3  
+      
+        Serial.print("T3=");
+        Serial.print(Thermister(analogRead(6))); //read pin A6
+        Serial.println("c");
+        delay(1500);
+      
+
+            //Voltage V4
+    
+      value3 = analogRead(3);                  //read pin A3
+      vout3 = (value3 * 5.0) / 1024.0; 
+      vin3 = (vout3 / (R2/(R1+R2))); 
+      vip3 = vin3-11.90;
+      delay(1500);  
+      Serial.print("V4= ");
+      Serial.println(vip3,2);
+    
+     
+     
+        Serial.print("T4=");
+        Serial.print(Thermister(analogRead(7))); //read pin A7
+        Serial.println("c");
+        delay(1500);
+
+     //Current I
+   
+    unsigned int x=0;
+     float AcsValue=0.0,Samples=0.0,AvgAcs=0.0,AcsValueF=0.0;
+     for (int x = 0; x < 150; x++) //Get 150 samples
+     AcsValue = analogRead(8);     ////read pin A8  
+     Samples = Samples + AcsValue;  //Add samples together
+     delay (3); // let ADC settle before next sample 3ms
+   
+      AvgAcs=Samples/150.0;//Taking Average of Samples
+      AcsValueF = (2.5 - (AvgAcs * (5.0 / 1024.0)) )/0.185;
+      Serial.print("I=");
+      Serial.println(AcsValueF);//Print the read current on Serial monitor
+      delay(50);
+   
+ }
