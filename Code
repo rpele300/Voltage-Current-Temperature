@@ -117,7 +117,7 @@ void loop()
       Serial.print("V4= ");
       Serial.println(vip3,2);
     
-     
+       //Temp T4
      
         Serial.print("T4=");
         Serial.print(Thermister(analogRead(7))); //read pin A7
